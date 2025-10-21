@@ -9,11 +9,6 @@ services:
     volumes:
       - ./models:/root/.paddlex/official_models
     command: paddlex_genai_server --model_name PaddleOCR-VL-0.9B --host 0.0.0.0 --port 8000 --backend vllm
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     restart: unless-stopped
 
   ocr-api:
@@ -24,20 +19,4 @@ services:
       - VLLM_SERVER_URL=http://vllm-server:8000/v1
       - MAX_WORKERS=4          # 进程池大小
       - THREAD_WORKERS=10      # 线程池大小
-    depends_on:
-      vllm-server:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: '4'            # 限制 CPU 使用
-          memory: 4G           # 限制内存使用
-        reservations:
-          cpus: '2'
-          memory: 2G
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
     restart: unless-stopped
