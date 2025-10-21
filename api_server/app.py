@@ -39,6 +39,12 @@ async def lifespan(app: FastAPI):
     # 启动时
     thread_pool = ThreadPoolExecutor(max_workers=THREAD_WORKERS)
     logger.info("Thread pool started")
+
+    # 预加载 PaddleOCR 模型
+    logger.info("Preloading PaddleOCR pipeline...")
+    PaddleOCRSingleton.get_pipeline()
+    logger.info("PaddleOCR pipeline preloaded successfully")
+
     yield
     # 关闭时
     if thread_pool:
