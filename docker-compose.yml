@@ -20,6 +20,8 @@ services:
       - VLLM_SERVER_URL=${VLLM_SERVER_URL:-http://vllm-server:8000/v1}
       - MAX_WORKERS=${MAX_WORKERS:-4}
       - THREAD_WORKERS=${THREAD_WORKERS:-10}
+    volumes:
+      - ./models:/app/models
     depends_on:
       - vllm-server
     restart: unless-stopped
