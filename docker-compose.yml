@@ -21,7 +21,7 @@ services:
       - MAX_WORKERS=${MAX_WORKERS:-4}
       - THREAD_WORKERS=${THREAD_WORKERS:-10}
     volumes:
-      - ./models:/app/models
+      - ./models:/root/.paddlex/official_models
     depends_on:
       - vllm-server
     restart: unless-stopped
