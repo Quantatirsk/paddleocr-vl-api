@@ -1,6 +1,14 @@
 # PaddleOCR-VL API
 
-A high-performance OCR microservice based on PaddleOCR-VL-0.9B model, providing document recognition capabilities compatible with MinerU API format.
+[中文文档](docs/README.zh.md) | English
+
+A high-performance OCR microservice based on PaddleOCR-VL-1.5-0.9B model, providing document recognition capabilities compatible with MinerU API format.
+
+## Model Information
+
+- **Model**: [PaddleOCR-VL-1.5-0.9B](https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.5)
+- **Backend**: VLLM for high-performance GPU inference
+- **Features**: Vision-Language model optimized for document understanding
 
 ## Features
 
@@ -20,6 +28,9 @@ A high-performance OCR microservice based on PaddleOCR-VL-0.9B model, providing 
 git clone <your-repo-url>
 cd paddleocr-vl-api
 
+# Copy environment configuration
+cp .env.example .env
+
 # Start the complete service stack
 docker-compose up -d
 
@@ -28,8 +39,8 @@ docker-compose logs -f
 ```
 
 Services will start on the following ports:
-- OCR API: http://localhost:8080
-- VLLM Server: http://localhost:8000
+- OCR API: http://localhost:8781
+- VLLM Server: http://localhost:8780
 
 ### Using Pre-built Image
 
@@ -44,11 +55,11 @@ docker run -p 8080:8080 \
 
 ```bash
 # Install dependencies
-pip install -r api_server/requirements.txt
+pip install -r app/requirements.txt
 
 # Start API server
-cd api_server
-uvicorn app:app --reload --host 0.0.0.0 --port 8080
+cd app
+uvicorn main:app --reload --host 0.0.0.0 --port 8080
 
 # Start Web UI testing tool
 streamlit run test/streamlit_client.py
@@ -59,7 +70,7 @@ streamlit run test/streamlit_client.py
 ### Basic Request
 
 ```bash
-curl -X POST http://localhost:8080/file_parse \
+curl -X POST http://localhost:8781/file_parse \
   -F "files=@document.pdf" \
   -F "return_md=true"
 ```
@@ -67,7 +78,7 @@ curl -X POST http://localhost:8080/file_parse \
 ### Advanced Parameters
 
 ```bash
-curl -X POST http://localhost:8080/file_parse \
+curl -X POST http://localhost:8781/file_parse \
   -F "files=@document.pdf" \
   -F "return_md=true" \
   -F "return_middle_json=true" \
@@ -118,13 +129,13 @@ curl -X POST http://localhost:8080/file_parse \
          ▼
 ┌─────────────────┐
 │   OCR API       │  FastAPI + Gunicorn
-│   (port 8080)   │  Multi-process + Thread Pool
+│  (port 8781)    │  Multi-process + Thread Pool
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│  VLLM Server    │  PaddleOCR-VL-0.9B
-│   (port 8000)   │  GPU Accelerated Inference
+│  VLLM Server    │  PaddleOCR-VL-1.5-0.9B
+│  (port 8780)    │  GPU Accelerated Inference
 └─────────────────┘
 ```
 
@@ -141,9 +152,12 @@ curl -X POST http://localhost:8080/file_parse \
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VLLM_SERVER_URL` | VLLM service address | http://192.168.6.146:8780/v1 |
+| `VLLM_SERVER_URL` | VLLM service address | http://vllm-server:8000/v1 |
 | `THREAD_WORKERS` | Thread pool size | 10 |
 | `MAX_WORKERS` | Gunicorn worker processes | 4 |
+| `NVIDIA_VISIBLE_DEVICES` | GPU device selection | 0 |
+
+Edit `.env` file to customize configuration.
 
 ### Docker Compose Configuration
 
@@ -176,23 +190,35 @@ python test/test_paddleocr.py
 streamlit run test/streamlit_client.py
 
 # API health check
-curl http://localhost:8080/health
+curl http://localhost:8781/health
 ```
 
 ## Project Structure
 
 ```
 paddleocr-vl-api/
-├── api_server/
-│   ├── app.py              # FastAPI main application
-│   └── requirements.txt    # Python dependencies
+├── app/
+│   ├── main.py              # FastAPI main application
+│   ├── config.py            # Configuration management
+│   ├── models.py            # Pydantic data models
+│   ├── ocr/                 # OCR core modules
+│   │   ├── singleton.py     # PaddleOCR singleton
+│   │   ├── processor.py     # OCR processing logic
+│   │   └── pdf.py           # PDF utilities
+│   ├── utils/               # Utility functions
+│   │   ├── file_merge.py    # Multi-page file merging
+│   │   └── response.py      # Response building
+│   └── requirements.txt     # Python dependencies
 ├── test/
-│   ├── streamlit_client.py # Streamlit testing client
-│   ├── test_paddleocr.py  # Basic tests
-│   └── files/             # Test files
-├── Dockerfile              # OCR API image
-├── docker-compose.yml      # Service orchestration
-└── CLAUDE.md              # Development guide
+│   ├── streamlit_client.py  # Streamlit testing client
+│   ├── test_paddleocr.py    # Basic tests
+│   └── files/               # Test files
+├── Dockerfile               # OCR API image
+├── docker-compose.yml       # Single-node deployment
+├── docker-compose-cluster.yml # Multi-GPU cluster deployment
+├── nginx.conf               # Load balancer configuration
+├── .env.example             # Environment template
+└── CLAUDE.md                # Development guide
 ```
 
 ## License

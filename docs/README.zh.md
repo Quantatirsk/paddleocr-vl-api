@@ -1,6 +1,14 @@
 # PaddleOCR-VL API
 
-基于 PaddleOCR-VL-0.9B 模型的高性能 OCR 微服务，提供兼容 MinerU API 格式的文档识别能力。
+中文 | [English](../README.md)
+
+基于 PaddleOCR-VL-1.5-0.9B 模型的高性能 OCR 微服务，提供兼容 MinerU API 格式的文档识别能力。
+
+## 模型信息
+
+- **模型**: [PaddleOCR-VL-1.5-0.9B](https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.5)
+- **后端**: VLLM 高性能 GPU 推理
+- **特性**: 视觉-语言模型，针对文档理解优化
 
 ## 特性
 
@@ -20,6 +28,9 @@
 git clone <your-repo-url>
 cd paddleocr-vl-api
 
+# 复制环境配置
+cp .env.example .env
+
 # 启动完整服务栈
 docker-compose up -d
 
@@ -28,8 +39,8 @@ docker-compose logs -f
 ```
 
 服务将在以下端口启动：
-- OCR API: http://localhost:8080
-- VLLM Server: http://localhost:8000
+- OCR API: http://localhost:8781
+- VLLM Server: http://localhost:8780
 
 ### 使用预构建镜像
 
@@ -44,11 +55,11 @@ docker run -p 8080:8080 \
 
 ```bash
 # 安装依赖
-pip install -r api_server/requirements.txt
+pip install -r app/requirements.txt
 
 # 启动 API 服务器
-cd api_server
-uvicorn app:app --reload --host 0.0.0.0 --port 8080
+cd app
+uvicorn main:app --reload --host 0.0.0.0 --port 8080
 
 # 启动 Web UI 测试工具
 streamlit run test/streamlit_client.py
@@ -59,7 +70,7 @@ streamlit run test/streamlit_client.py
 ### 基础请求
 
 ```bash
-curl -X POST http://localhost:8080/file_parse \
+curl -X POST http://localhost:8781/file_parse \
   -F "files=@document.pdf" \
   -F "return_md=true"
 ```
@@ -67,7 +78,7 @@ curl -X POST http://localhost:8080/file_parse \
 ### 高级参数
 
 ```bash
-curl -X POST http://localhost:8080/file_parse \
+curl -X POST http://localhost:8781/file_parse \
   -F "files=@document.pdf" \
   -F "return_md=true" \
   -F "return_middle_json=true" \
@@ -118,13 +129,13 @@ curl -X POST http://localhost:8080/file_parse \
          ▼
 ┌─────────────────┐
 │   OCR API       │  FastAPI + Gunicorn
-│   (port 8080)   │  多进程 + 线程池
+│  (port 8781)    │  多进程 + 线程池
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│  VLLM Server    │  PaddleOCR-VL-0.9B
-│   (port 8000)   │  GPU 加速推理
+│  VLLM Server    │  PaddleOCR-VL-1.5-0.9B
+│  (port 8780)    │  GPU 加速推理
 └─────────────────┘
 ```
 
@@ -141,9 +152,12 @@ curl -X POST http://localhost:8080/file_parse \
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `VLLM_SERVER_URL` | VLLM 服务地址 | http://192.168.6.146:8780/v1 |
+| `VLLM_SERVER_URL` | VLLM 服务地址 | http://vllm-server:8000/v1 |
 | `THREAD_WORKERS` | 线程池大小 | 10 |
 | `MAX_WORKERS` | Gunicorn 进程数 | 4 |
+| `NVIDIA_VISIBLE_DEVICES` | GPU 设备选择 | 0 |
+
+编辑 `.env` 文件自定义配置。
 
 ### Docker Compose 配置
 
@@ -176,23 +190,35 @@ python test/test_paddleocr.py
 streamlit run test/streamlit_client.py
 
 # API 健康检查
-curl http://localhost:8080/health
+curl http://localhost:8781/health
 ```
 
 ## 项目结构
 
 ```
 paddleocr-vl-api/
-├── api_server/
-│   ├── app.py              # FastAPI 主应用
-│   └── requirements.txt    # Python 依赖
+├── app/
+│   ├── main.py              # FastAPI 主应用
+│   ├── config.py            # 配置管理
+│   ├── models.py            # Pydantic 数据模型
+│   ├── ocr/                 # OCR 核心模块
+│   │   ├── singleton.py     # PaddleOCR 单例
+│   │   ├── processor.py     # OCR 处理逻辑
+│   │   └── pdf.py           # PDF 工具
+│   ├── utils/               # 工具函数
+│   │   ├── file_merge.py    # 多页文件合并
+│   │   └── response.py      # 响应构建
+│   └── requirements.txt     # Python 依赖
 ├── test/
-│   ├── streamlit_client.py # Streamlit 测试客户端
-│   ├── test_paddleocr.py  # 基础测试
-│   └── files/             # 测试文件
-├── Dockerfile              # OCR API 镜像
-├── docker-compose.yml      # 服务编排
-└── CLAUDE.md              # 开发指南
+│   ├── streamlit_client.py  # Streamlit 测试客户端
+│   ├── test_paddleocr.py    # 基础测试
+│   └── files/               # 测试文件
+├── Dockerfile               # OCR API 镜像
+├── docker-compose.yml       # 单机部署
+├── docker-compose-cluster.yml # 多 GPU 集群部署
+├── nginx.conf               # 负载均衡配置
+├── .env.example             # 环境变量模板
+└── CLAUDE.md                # 开发指南
 ```
 
 ## 许可证

@@ -13,20 +13,20 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制依赖文件
-COPY api_server/requirements.txt .
+COPY app/requirements.txt .
 
 # 安装 Python 依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制应用代码
-COPY api_server/app.py app.py
+# 复制应用代码（整个 app 目录）
+COPY app/ ./app/
 
 # 暴露端口
 EXPOSE 8080
 
 # 使用 Gunicorn + Uvicorn workers 启动（多进程）
 # workers = (CPU cores * 2) + 1
-CMD ["gunicorn", "app:app", \
+CMD ["gunicorn", "app.main:app", \
      "--workers", "4", \
      "--worker-class", "uvicorn.workers.UvicornWorker", \
      "--bind", "0.0.0.0:8080", \

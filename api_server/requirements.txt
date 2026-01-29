@@ -1,8 +1,0 @@
-fastapi
-uvicorn[standard]
-python-multipart
-paddleocr
-paddlepaddle
-gunicorn
-paddleocr[doc-parser]
-pypdf  # PDF 页面提取功能

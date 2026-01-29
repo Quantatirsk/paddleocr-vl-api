@@ -1,14 +1,14 @@
 services:
   vllm-server:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddlex-genai-vllm-server
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddlex-genai-vllm-server:latest-nvidia-gpu
     ports:
       - "8780:8000"
     environment:
-      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-0}
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
-    command: paddlex_genai_server --model_name PaddleOCR-VL-0.9B --host 0.0.0.0 --port 8000 --backend vllm
+    command: paddlex_genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8000 --backend vllm
     restart: unless-stopped
 
   ocr-api:
@@ -16,7 +16,9 @@ services:
     ports:
       - "8781:8080"
     environment:
-      - VLLM_SERVER_URL=http://vllm-server:8000/v1
-      - MAX_WORKERS=4          # 进程池大小
-      - THREAD_WORKERS=10      # 线程池大小
+      - VLLM_SERVER_URL=${VLLM_SERVER_URL:-http://vllm-server:8000/v1}
+      - MAX_WORKERS=${MAX_WORKERS:-4}
+      - THREAD_WORKERS=${THREAD_WORKERS:-10}
+    depends_on:
+      - vllm-server
     restart: unless-stopped
