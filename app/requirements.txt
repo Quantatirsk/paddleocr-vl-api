@@ -1,9 +1,8 @@
-fastapi==0.115.0
-uvicorn[standard]==0.32.0
-python-multipart==0.0.12
-paddleocr==2.9.1
-paddlepaddle==3.0.0
-gunicorn==23.0.0
-paddleocr[doc-parser]==2.9.1
-pypdf==5.1.0
-pydantic==2.9.2
+fastapi==0.128.0
+uvicorn[standard]==0.40.0
+python-multipart==0.0.22
+paddleocr==3.4.0
+paddlepaddle==3.3.0
+gunicorn==24.1.1
+pypdf==6.6.2
+pydantic==2.12.5
