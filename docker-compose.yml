@@ -9,7 +9,7 @@ services:
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
-    command: paddlex_genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8000 --backend vllm
+    command: paddleocr genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8000 --backend vllm
     restart: unless-stopped
 
   ocr-api:
