@@ -5,6 +5,7 @@ services:
       - "8780:8000"
     environment:
       - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-0}
+      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models

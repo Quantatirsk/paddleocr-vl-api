@@ -20,6 +20,7 @@ services:
     image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
     environment:
       - NVIDIA_VISIBLE_DEVICES=0
+      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
@@ -30,6 +31,7 @@ services:
     image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
     environment:
       - NVIDIA_VISIBLE_DEVICES=0
+      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
