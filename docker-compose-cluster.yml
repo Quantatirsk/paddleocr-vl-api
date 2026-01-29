@@ -88,6 +88,8 @@ services:
       - VLLM_SERVER_URL=http://nginx:80/v1
       - MAX_WORKERS=${MAX_WORKERS:-4}
       - THREAD_WORKERS=${THREAD_WORKERS:-10}
+    volumes:
+      - ./models:/root/.paddlex/official_models
     depends_on:
       - nginx
     restart: unless-stopped
