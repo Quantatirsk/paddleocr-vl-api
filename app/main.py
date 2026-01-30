@@ -2,7 +2,7 @@
 优化的 PaddleOCR API - 支持图片和 PDF 文件的高并发 OCR 识别
 参考 MinerU API 设计，提供灵活的配置选项和多种返回格式
 """
-from fastapi_offline import FastAPI
+from fastapi_offline import FastAPIOffline as FastAPI
 from fastapi import File, UploadFile, HTTPException, Form
 from fastapi.responses import JSONResponse
 import tempfile
