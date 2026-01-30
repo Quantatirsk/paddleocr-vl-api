@@ -17,10 +17,10 @@ services:
 
   # GPU 0
   vllm-server-1:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     environment:
       - NVIDIA_VISIBLE_DEVICES=0
-      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
@@ -28,10 +28,10 @@ services:
     restart: unless-stopped
 
   vllm-server-2:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     environment:
       - NVIDIA_VISIBLE_DEVICES=0
-      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
@@ -40,9 +40,10 @@ services:
 
   # GPU 1
   vllm-server-3:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     environment:
       - NVIDIA_VISIBLE_DEVICES=1
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
@@ -50,9 +51,10 @@ services:
     restart: unless-stopped
 
   vllm-server-4:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     environment:
       - NVIDIA_VISIBLE_DEVICES=1
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
@@ -61,9 +63,10 @@ services:
 
   # GPU 2
   vllm-server-5:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     environment:
       - NVIDIA_VISIBLE_DEVICES=2
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
@@ -71,9 +74,10 @@ services:
     restart: unless-stopped
 
   vllm-server-6:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     environment:
       - NVIDIA_VISIBLE_DEVICES=2
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models

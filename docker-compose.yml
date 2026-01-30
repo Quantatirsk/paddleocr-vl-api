@@ -1,11 +1,11 @@
 services:
   vllm-server:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-offline
     ports:
       - "8780:8000"
     environment:
       - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-0}
-      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
+      - VLM_BACKEND=vllm
     runtime: nvidia
     volumes:
       - ./models:/root/.paddlex/official_models
