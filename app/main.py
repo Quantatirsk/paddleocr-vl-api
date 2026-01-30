@@ -2,8 +2,8 @@
 优化的 PaddleOCR API - 支持图片和 PDF 文件的高并发 OCR 识别
 参考 MinerU API 设计，提供灵活的配置选项和多种返回格式
 """
-from fastapi_offline import FastAPIOffline as FastAPI
-from fastapi import File, UploadFile, HTTPException, Form
+from fastapi_offline import FastAPIOffline  # 用于创建实例（支持离线文档）
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form  # FastAPI 用于类型注解
 from fastapi.responses import JSONResponse
 import tempfile
 import os
@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
         logger.info("Thread pool shut down")
 
 
-app = FastAPI(title="PaddleOCR Optimized API", lifespan=lifespan)
+app = FastAPIOffline(title="PaddleOCR Optimized API", lifespan=lifespan)
 
 
 @app.post("/file_parse")
